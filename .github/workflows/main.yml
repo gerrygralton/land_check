@@ -32,6 +32,7 @@ jobs:
           TO_ADDRS: ${{ secrets.TO_ADDRS }}
         run: python land_check.py
       - name: Commit and push changes to data.json
+        run: |
           git add data.json
           git commit -m "Auto update `data.json`"
           git push
