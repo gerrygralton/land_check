@@ -33,6 +33,8 @@ jobs:
         run: python land_check.py
       - name: Commit and push changes to data.json
         run: |
+          git config user.email "gerry@gralton.net"
+          git config user.name "Gerry Gralton"
           git add data.json
           git commit -m "Auto update `data.json`"
           git push
