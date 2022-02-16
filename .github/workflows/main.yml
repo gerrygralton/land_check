@@ -1,0 +1,37 @@
+# This is a basic workflow to help you get started with Actions
+
+name: land_check
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  schedule:
+   - cron: "0 9 * * *"
+   
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+          cache: 'pip'
+      - name: install dependencies
+        run: pip install -r requirements.txt
+      - name: Run script
+        env:
+          MAIL_KEY: ${{ secrets.MAIL_KEY }}
+          FROM_ADDR: ${{ secrets.FROM_ADDR }}
+          TO_ADDRS: ${{ secrets.TO_ADDRS }}
+        run: python land_check.py
+      - name: Commit and push changes to data.json
+          git add data.json
+          git commit -m "Auto update `data.json`"
+          git push
