@@ -25,12 +25,13 @@ listings = api.search(locations=["WA"],
                         max_price=max_price,
                         min_land_size=min_land_size*10000)
 old_properties = []
-keep_indexs = []
 new_properties = []
+stored_urls = []
+sent_urls = []
 
 with open("data.json", "r") as file:
     try:
-        old_properties = json.load(file)
+        stored_urls = json.load(file)
     except json.JSONDecodeError:
         pass
     except FileNotFoundError:
@@ -50,12 +51,11 @@ for property in listings:
     dollars_per_ha = property.price / property.land_size
 
     if dollars_per_ha <= max_dollars_per_ha:
-        if property.url not in old_properties:
-            new_properties.append(property.url)
+        if property.url not in stored_urls:
+            new_properties.append(property)
         else:
-            keep_indexs.append(old_properties.index(property.url))
-
-old_properties = [old_properties[i] for i in keep_indexs]
+            old_properties.append(property)
+        sent_urls.append(property.url)
 
 if len(new_properties) > 0:
 
@@ -73,17 +73,30 @@ if len(new_properties) > 0:
     $%d of over %dha and with a land value less than $%d/ha."""
     % (max_price, min_land_size, max_dollars_per_ha)))
 
-    msg.attach(MIMEText("New\n" + '\n'.join(new_properties)))
-    
-    if len(old_properties > 0):
-        msg.attach(MIMEText("Old\n" + '\n'.join(old_properties)))
-    
+    new_text = "New\n"
+    for this in new_properties:
+        new_text += this.url + "\n"
+        new_text \
+            += "Value: " + str(round(this.price / this.land_size)) + "$/ha" \
+            + "\t Price: $" + str(this.price) \
+            + "\t Area: " + str(this.land_size) + "ha\n\n"
+    msg.attach(MIMEText(new_text))
+
+    if len(old_properties) > 0:
+        old_text = "Old\n"
+        for this in old_properties:
+            old_text += this.url + "\n"
+            old_text \
+                += "Value: " + str(round(this.price / this.land_size))+"$/ha" \
+                + "\t Price: $" + str(this.price) \
+                + "\t Area: " + str(this.land_size) + "ha\n\n"
+        msg.attach(MIMEText(old_text))
+
     msg.attach(MIMEText("To contribute go to: https://github.com/gerrygralton/land_check"))
 
     smtp.sendmail(from_addr=os.environ["FROM_ADDR"],
                     to_addrs=json.loads(os.environ["TO_ADDRS"]),
                     msg=msg.as_string())
 
-properties = old_properties + new_properties
 with open("data.json", "w") as file:
-    json.dump(properties, file)
+    json.dump(sent_urls, file)
