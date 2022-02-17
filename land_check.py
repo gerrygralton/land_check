@@ -70,11 +70,15 @@ if len(new_properties) > 0:
     msg["Subject"] = str("%d new properties uploaded" % len(new_properties))
     msg.attach(MIMEText("""
     All properties found on RealEstate.com.au for under
-    $%d of over %dha and with a land value greater than $%d/ha."""
+    $%d of over %dha and with a land value less than $%d/ha."""
     % (max_price, min_land_size, max_dollars_per_ha)))
 
     msg.attach(MIMEText("New\n" + '\n'.join(new_properties)))
-    msg.attach(MIMEText("Old\n" + '\n'.join(old_properties)))
+    
+    if len(old_properties > 0):
+        msg.attach(MIMEText("Old\n" + '\n'.join(old_properties)))
+    
+    msg.attach(MIMEText("To contribute go to: https://github.com/gerrygralton/land_check"))
 
     smtp.sendmail(from_addr=os.environ["FROM_ADDR"],
                     to_addrs=json.loads(os.environ["TO_ADDRS"]),
