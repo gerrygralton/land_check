@@ -67,7 +67,12 @@ if len(new_properties) > 0:
 
     msg = MIMEMultipart()
     msg["From"] = os.environ["FROM_ADDR"]
-    msg["Subject"] = str("%d new properties uploaded" % len(new_properties))
+    
+    if len(new_properties) == 1:
+        msg["Subject"] = str("1 new property uploaded")
+    else:
+        msg["Subject"] = str("%d new properties uploaded" % len(new_properties))
+        
     msg.attach(MIMEText("""
     All properties found on RealEstate.com.au for under
     $%d of over %dha and with a land value less than $%d/ha."""
