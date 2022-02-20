@@ -36,5 +36,4 @@ jobs:
           git config user.email "gerrygralton@users.noreply.github.com"
           git config user.name "Gerry Gralton"
           git add data.json
-          git commit -m "Auto update `data.json`"
-          git push
+          git diff --staged --quiet || ( git commit -m "Auto update `data.json`" && git push )
