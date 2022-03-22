@@ -75,7 +75,7 @@ if len(new_properties) > 0:
         
     msg.attach(MIMEText("""
     All properties found on RealEstate.com.au for under
-    $%d of over %dha and with a land value less than $%d/ha."""
+    $%d of over %dha and with a land value less than $%d/ha.\n"""
     % (max_price, min_land_size, max_dollars_per_ha)))
 
     new_text = "New\n"
