@@ -9,7 +9,7 @@ import smtplib
 
 # SECRETS IN GITHUB:
 # FROM_ADDR - string
-# TO_ADDRS - List in '' eg '["abc", "sdf"]'
+# TO_ADDRS - List e.g. ["abc", "sdf"]
 # MAIL_KEY - string
 
 api = RealestateComAu()
